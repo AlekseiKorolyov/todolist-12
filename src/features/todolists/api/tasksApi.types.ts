@@ -11,6 +11,15 @@ export type DomainTask = {
   addedDate: string
 }
 
+export type UpdateTaskModel = {
+  description: string
+  title: string
+  status: number
+  priority: number
+  startDate: string
+  deadline: string
+}
+
 export type GetTasksResponse = {
   error: string | null
   totalCount: number
