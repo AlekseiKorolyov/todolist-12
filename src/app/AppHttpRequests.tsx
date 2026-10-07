@@ -4,7 +4,8 @@ import type { Todolist } from "@/features/todolists/api/todolistsApi.types"
 import { type ChangeEvent, type CSSProperties, useEffect, useState } from "react"
 import Checkbox from "@mui/material/Checkbox"
 import { tasksApi } from "@/features/todolists/api/tasksApi.ts"
-import { DomainTask, TaskStatus, UpdateTaskModel } from "@/features/todolists/api/tasksApi.types.ts"
+import { DomainTask, UpdateTaskModel } from "@/features/todolists/api/tasksApi.types.ts"
+import { TaskStatus } from "@/common/enums/enums.ts"
 
 export const AppHttpRequests = () => {
   const [todolists, setTodolists] = useState<Todolist[]>([])
@@ -46,7 +47,11 @@ export const AppHttpRequests = () => {
     })
   }
 
-  const deleteTask = (todolistId: string, taskId: string) => {}
+  const deleteTask = (todolistId: string, taskId: string) => {
+    tasksApi.deleteTask({ todolistId, taskId }).then(() => {
+      setTasks({ ...tasks, [todolistId]: [...tasks[todolistId].filter((el) => el.id !== taskId)] })
+    })
+  }
 
   const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>, task: DomainTask) => {
     const model: UpdateTaskModel = {
@@ -66,7 +71,22 @@ export const AppHttpRequests = () => {
     })
   }
 
-  const changeTaskTitle = (task: any, title: string) => {}
+  const changeTaskTitle = (task: DomainTask, title: string) => {
+    const model: UpdateTaskModel = {
+      title: task.title,
+      description: task.description,
+      deadline: task.deadline,
+      startDate: task.startDate,
+      priority: task.priority,
+      status: task.status,
+    }
+    tasksApi.updateTask({ todolistId: task.todoListId, taskId: task.id, model }).then(() => {
+      setTasks({
+        ...tasks,
+        [task.todoListId]: tasks[task.todoListId].map((el) => (el.id === task.id ? { ...el, title: title } : el)),
+      })
+    })
+  }
 
   return (
     <div style={{ margin: "20px" }}>
