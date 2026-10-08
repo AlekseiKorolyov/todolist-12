@@ -17,7 +17,7 @@ export const AppHttpRequests = () => {
       setTodolists(todolists)
       todolists.forEach((todolist) => {
         tasksApi.getTasks(todolist.id).then((res) => {
-          setTasks({ ...tasks, [todolist.id]: res.data.items })
+          setTasks((tasks) => ({ ...tasks, [todolist.id]: res.data.items }))
         })
       })
     })
@@ -43,7 +43,7 @@ export const AppHttpRequests = () => {
   const createTask = (todolistId: string, title: string) => {
     tasksApi.createTask({ todolistId, title }).then((res) => {
       const newTask = res.data.data.item
-      setTasks({ ...tasks, [todolistId]: [newTask, ...tasks[todolistId]] })
+      setTasks({ ...tasks, [todolistId]: [newTask, ...(tasks[todolistId] || [])] })
     })
   }
 
